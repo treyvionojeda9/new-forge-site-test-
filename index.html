@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Forge Systems · Design concept: Forged &amp; Fired</title>
+<meta name="theme-color" content="#16181B">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="assets/favicon-180.png">
+<link rel="preload" href="assets/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" as="image" href="assets/hero-1000.webp" media="(max-width: 899px)">
+<link rel="preload" as="image" href="assets/hero-2000.webp" media="(min-width: 900px)">
+<style>
+@font-face{font-family:"Archivo";src:url(assets/archivo-var.woff2) format("woff2");font-weight:100 900;font-stretch:62% 125%;font-display:swap}
+@font-face{font-family:"Caprasimo";src:url(assets/caprasimo-400.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Plex Mono";src:url(assets/plexmono-500.woff2) format("woff2");font-weight:500;font-display:swap}
+:root{
+  --iron:#16181B; --iron-2:#1E2125; --graphite:#2B2F35; --steel:#5E6670; --scale:#9AA1A9;
+  --limestone:#F5F2EC; --cream:#F5EAD8; --kraft:#EBDDC5; --ash:#D9D4CA; --umber:#201E1D; --bark:#645C50;
+  --ember:#E8571E; --ember-deep:#B5400E; --copper:#C67139; --brass:#C9A15A; --molten:#FF8A3D;
+  --display:"Archivo",Impact,"Arial Narrow",sans-serif; --warm:"Caprasimo",Georgia,serif; --mono:"Plex Mono",ui-monospace,Menlo,monospace;
+  --body:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --ease:cubic-bezier(.2,.7,.2,1); --wrap:1200px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:84px}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{margin:0;background:var(--iron);color:var(--limestone);font-family:var(--body);font-stretch:100%;font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--molten);outline-offset:3px;border-radius:4px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 20px}
+@media(min-width:900px){.wrap{padding:0 40px}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:12px;top:-60px;z-index:100;background:var(--ember);color:var(--iron);padding:10px 14px;border-radius:6px;font-weight:700}
+.skip:focus{top:12px}
+
+/* ---------- textures ---------- */
+.blueprint{background-color:var(--iron);background-image:
+  linear-gradient(rgba(154,161,169,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(154,161,169,.07) 1px,transparent 1px),
+  linear-gradient(rgba(154,161,169,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(154,161,169,.035) 1px,transparent 1px);
+  background-size:96px 96px,96px 96px,24px 24px,24px 24px;background-position:-1px -1px}
+.kraft{color:var(--umber);background-color:var(--cream);background-image:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .39 0 0 0 0 .3 0 0 0 0 .2 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+  linear-gradient(rgba(100,92,80,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(100,92,80,.09) 1px,transparent 1px);
+  background-size:220px 220px,48px 48px,48px 48px}
+.hazard{height:14px;background:repeating-linear-gradient(-45deg,var(--ember) 0 14px,var(--iron) 14px 28px);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),inset 0 -1px 0 rgba(0,0,0,.4)}
+.hazard.thin{height:6px;background:repeating-linear-gradient(-45deg,var(--ember) 0 8px,transparent 8px 16px)}
+.plate{position:relative;border-radius:14px;background:
+  linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0) 40%),
+  repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0 2px,rgba(0,0,0,.02) 2px 4px),
+  linear-gradient(160deg,#2A2E33,#1B1E22 60%,#202328);
+  border:1px solid rgba(154,161,169,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 18px 40px -18px rgba(0,0,0,.6)}
+.rivets::before,.rivets::after{content:"";position:absolute;top:12px;width:9px;height:9px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#E9D3A6,#B08445 45%,#5B4220 80%);box-shadow:0 1px 1px rgba(0,0,0,.6),inset 0 -1px 1px rgba(0,0,0,.35)}
+.rivets::before{left:12px}.rivets::after{right:12px}
+.rivets.four{--r:radial-gradient(circle at 35% 30%,#E9D3A6,#B08445 45%,#5B4220 80%)}
+.rivets.four>.rv{position:absolute;bottom:12px;width:9px;height:9px;border-radius:50%;background:var(--r);box-shadow:0 1px 1px rgba(0,0,0,.6)}
+.rivets.four>.rv.l{left:12px}.rivets.four>.rv.r{right:12px}
+
+/* ---------- type ---------- */
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;display:flex;align-items:center;gap:12px;margin:0 0 18px}
+.kicker::before{content:"";width:34px;height:2px;background:var(--ember);box-shadow:0 0 10px var(--ember)}
+.kraft .kicker{color:var(--bark)}
+.blueprint .kicker,.dark .kicker{color:var(--scale)}
+.h2{font-family:var(--display);font-stretch:64%;font-variation-settings:"wdth" 64;font-weight:850;text-transform:uppercase;line-height:.9;letter-spacing:-.01em;font-size:clamp(52px,13.5vw,104px);margin:0 0 22px}
+.warm{font-family:var(--warm);font-weight:400;text-transform:none;letter-spacing:0;font-stretch:100%}
+.h2 .warm{display:block;font-variation-settings:normal;font-size:.62em;line-height:1.05;margin-top:.12em;color:var(--copper)}
+.kraft .h2 .warm{color:var(--ember-deep)}
+.lead{font-size:clamp(17px,2.2vw,20px);max-width:58ch;opacity:.9;margin:0}
+.mono{font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase}
+
+/* ---------- buttons ---------- */
+.btn{--mx:0px;--my:0px;position:relative;isolation:isolate;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 24px;border-radius:10px;font-family:var(--display);font-stretch:85%;font-weight:750;font-size:17px;letter-spacing:.02em;text-decoration:none;border:0;cursor:pointer;
+  transform:translate(var(--mx),var(--my));transition:transform .25s var(--ease),box-shadow .18s var(--ease),background-color .18s}
+.btn-ember{background:linear-gradient(180deg,#F16A30,var(--ember) 55%,#D24C16);color:#1A0E07;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -2px 0 rgba(0,0,0,.18),0 10px 26px -10px rgba(232,87,30,.8)}
+.btn-ember:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -2px 0 rgba(0,0,0,.18),0 0 0 3px rgba(232,87,30,.25),0 14px 36px -8px rgba(255,122,48,.9)}
+.btn-ember:active{transform:translate(var(--mx),calc(var(--my) + 1px)) scale(.985)}
+.btn-steel{background:linear-gradient(180deg,#3A3F46,#24282D);color:var(--limestone);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 0 1px rgba(154,161,169,.3)}
+.btn-steel:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 0 1px rgba(201,161,90,.7),0 10px 26px -12px rgba(201,161,90,.55)}
+.kraft .btn-steel{background:linear-gradient(180deg,#2B2F35,#16181B)}
+.btn::after{content:"";position:absolute;inset:-2px;z-index:-1;pointer-events:none;
+  background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.55) 47%,rgba(255,236,210,.15) 53%,transparent 66%);transform:translateX(-120%)}
+.btn:hover::after,.btn.sheen::after{transition:transform .75s var(--ease);transform:translateX(120%)}
+.btn svg{width:18px;height:18px;flex:none}
+.btn .arr{transition:transform .2s var(--ease)}.btn:hover .arr{transform:translateX(4px)}
+
+/* ---------- molten progress + spotlight ---------- */
+.progress{position:fixed;left:0;top:0;height:3px;width:100%;z-index:60;transform-origin:0 50%;transform:scaleX(var(--p,0));
+  background:linear-gradient(90deg,#8A2A08,var(--ember-deep) 25%,var(--ember) 60%,#FFB070 92%,#FFE7C2);box-shadow:0 0 12px rgba(255,122,48,.75),0 0 2px #FFD2A6;pointer-events:none;will-change:transform}
+.spot{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .4s;
+  background:radial-gradient(420px circle at var(--sx,50%) var(--sy,40%),rgba(255,138,61,.16),rgba(201,161,90,.06) 40%,transparent 70%);mix-blend-mode:screen}
+@media (hover:hover) and (pointer:fine){.has-spot:hover>.spot{opacity:1}}
+
+/* ---------- header ---------- */
+.concept-flag{background:var(--brass);color:var(--iron);font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:6px 12px}
+header.top{position:sticky;top:0;z-index:50;background:rgba(22,24,27,.86);backdrop-filter:blur(10px) saturate(1.2);-webkit-backdrop-filter:blur(10px) saturate(1.2);border-bottom:1px solid rgba(154,161,169,.16)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:68px;gap:16px}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none}
+.brand img{width:38px;height:38px;border-radius:7px}
+.brand b{display:block;font-family:var(--display);font-stretch:90%;font-weight:800;font-size:22px;line-height:1;letter-spacing:-.01em}
+.brand small{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.32em;color:var(--scale);margin-top:3px}
+.nav ul{display:none;list-style:none;margin:0;padding:0;gap:26px}
+.nav ul a{text-decoration:none;font-size:14.5px;opacity:.82;position:relative;padding:6px 0}
+.nav ul a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--ember);transform:scaleX(0);transform-origin:left;transition:transform .2s var(--ease);box-shadow:0 0 8px var(--ember)}
+.nav ul a:hover{opacity:1}.nav ul a:hover::after{transform:scaleX(1)}
+.nav .right{display:flex;align-items:center;gap:14px}
+.nav .tel{display:none;font-family:var(--mono);font-size:13.5px;text-decoration:none;opacity:.85}
+.nav .btn{min-height:42px;padding:0 16px;font-size:15px}
+@media(min-width:1000px){.nav ul{display:flex}.nav .tel{display:inline}}
+
+/* ---------- hero ---------- */
+.hero{position:relative;overflow:hidden;min-height:calc(100svh - 96px);display:flex;align-items:flex-end;padding:72px 0 0}
+.hero-img{position:absolute;inset:0;z-index:0}
+.hero-img img{width:100%;height:100%;object-fit:cover;object-position:60% 40%;opacity:.5}
+.hero::before{content:"";position:absolute;inset:0;z-index:1;background:
+  linear-gradient(180deg,rgba(22,24,27,.55),rgba(22,24,27,.35) 30%,rgba(22,24,27,.92) 82%,var(--iron)),
+  linear-gradient(90deg,rgba(22,24,27,.85),rgba(22,24,27,.2) 70%)}
+.hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background-image:
+  linear-gradient(rgba(201,161,90,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(201,161,90,.08) 1px,transparent 1px);background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(ellipse 80% 70% at 70% 30%,#000 20%,transparent 75%);mask-image:radial-gradient(ellipse 80% 70% at 70% 30%,#000 20%,transparent 75%)}
+.hero .spot{z-index:2}
+.hero-inner{position:relative;z-index:3;width:100%;padding-bottom:28px}
+.steel-line{position:absolute;left:max(10px,calc(50% - var(--wrap)/2 + 10px));top:0;bottom:0;width:1px;z-index:3;background:linear-gradient(180deg,transparent,rgba(154,161,169,.45) 20%,rgba(154,161,169,.25) 80%,transparent)}
+.steel-line i{position:absolute;left:-3px;top:0;width:7px;height:7px;border-radius:50%;background:var(--molten);box-shadow:0 0 10px 2px rgba(255,138,61,.8),0 0 30px 6px rgba(232,87,30,.35);transform:translateY(var(--ty,120px));will-change:transform}
+@media(max-width:899px){.steel-line{display:none}}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--scale);display:flex;align-items:center;gap:12px;margin:0 0 18px}
+.eyebrow::before{content:"";width:28px;height:1px;background:var(--scale)}
+.hero h1{margin:0;font-family:var(--display);font-stretch:62%;font-variation-settings:"wdth" 62;font-weight:880;text-transform:uppercase;line-height:.86;letter-spacing:-.012em;font-size:clamp(58px,15.5vw,172px)}
+.hero h1 .row{display:block}
+.hero h1 .hot{color:transparent;-webkit-text-stroke:1.5px var(--limestone);background:linear-gradient(90deg,var(--limestone),var(--limestone)) 0 0/0% 100% no-repeat;-webkit-background-clip:text;background-clip:text}
+.hero h1 .warm{display:block;text-transform:none;font-size:.5em;line-height:1.1;margin-top:.14em;color:var(--copper);letter-spacing:0;
+  background:linear-gradient(100deg,var(--copper) 20%,#FFC489 45%,var(--ember) 60%,var(--copper) 80%) 0 0/250% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero .sub{max-width:46ch;font-size:clamp(17px,2.2vw,20px);margin:26px 0 28px;color:#E9E4DA}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:40px;border-top:1px solid rgba(154,161,169,.2);padding-top:22px}
+.chip{position:relative;padding:14px 12px 12px;border-radius:10px;background:linear-gradient(170deg,rgba(43,47,53,.75),rgba(22,24,27,.75));border:1px solid rgba(154,161,169,.2)}
+.chip b{display:block;font-family:var(--display);font-stretch:70%;font-weight:850;font-size:clamp(30px,6vw,46px);line-height:1;color:var(--molten);text-shadow:0 0 18px rgba(232,87,30,.45)}
+.chip span{display:block;font-size:13px;line-height:1.35;margin-top:6px;color:#D9D4CA}
+@media(min-width:900px){.chips{grid-template-columns:repeat(3,minmax(0,260px))}.chip{padding:18px 18px 16px}.chip span{font-size:14.5px}}
+
+/* ---------- stamp + reveal ---------- */
+.js .stamp{opacity:0;transform:scale(1.55) rotate(-4deg)}
+.js .stamp.in{animation:stamp .42s cubic-bezier(.2,.9,.25,1.35) both}
+@keyframes stamp{0%{opacity:0;transform:scale(1.55) rotate(-4deg);filter:blur(2px)}55%{opacity:1;transform:scale(.94) rotate(0);filter:blur(0)}75%{transform:scale(1.03)}100%{opacity:1;transform:none}}
+.stamp.in::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;animation:ring .6s ease-out .12s both;box-shadow:0 0 0 0 rgba(232,87,30,.55)}
+@keyframes ring{to{box-shadow:0 0 0 14px rgba(232,87,30,0)}}
+.js .rv{opacity:0;transform:translateY(18px)}
+.js .rv.in{opacity:1;transform:none;transition:opacity .38s var(--ease),transform .38s var(--ease)}
+
+/* ---------- sections ---------- */
+section{position:relative}
+.sec{padding:96px 0}
+@media(min-width:900px){.sec{padding:132px 0}}
+.sec-head{display:grid;gap:18px;margin-bottom:52px}
+@media(min-width:900px){.sec-head{grid-template-columns:1.25fr 1fr;align-items:end;gap:48px}}
+
+/* how */
+.steps{display:grid;gap:18px;position:relative}
+@media(min-width:900px){.steps{grid-template-columns:repeat(3,1fr);gap:22px}}
+.weld{display:none}
+@media(min-width:900px){.weld{display:block;position:absolute;left:4%;right:4%;top:58px;height:3px;border-radius:3px;background:rgba(100,92,80,.25);overflow:hidden}
+ .weld i{position:absolute;inset:0;transform-origin:left;transform:scaleX(0);background:linear-gradient(90deg,var(--ember-deep),var(--ember),#FFC489);box-shadow:0 0 14px var(--ember)}
+ .weld.in i{transform:scaleX(1);transition:transform 1.1s var(--ease) .15s}}
+.step{position:relative;padding:28px 24px 26px;border-radius:14px;background:linear-gradient(180deg,#FFF8EC,#F2E4CC);border:1px solid rgba(100,92,80,.25);box-shadow:inset 0 1px 0 #fff,0 18px 36px -24px rgba(60,40,20,.55);transition:transform .22s var(--ease),box-shadow .22s var(--ease)}
+.step .num{position:relative;display:inline-grid;place-items:center;width:64px;height:64px;border-radius:12px;background:var(--iron);color:var(--molten);font-family:var(--display);font-stretch:70%;font-weight:850;font-size:34px;line-height:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 6px 16px -6px rgba(0,0,0,.5);margin-bottom:20px;z-index:1}
+.step h3{font-family:var(--display);font-stretch:72%;font-weight:850;text-transform:uppercase;font-size:30px;line-height:.95;margin:0 0 10px;color:var(--iron)}
+.step p{margin:0;color:#4A4339}
+.step .tag{position:absolute;top:24px;right:22px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--bark)}
+@media (hover:hover){.step:hover{transform:translateY(-4px);box-shadow:inset 0 1px 0 #fff,0 0 0 1px rgba(232,87,30,.45),0 24px 44px -20px rgba(232,87,30,.55)}}
+
+/* trades */
+.trades-grid{display:grid;gap:14px}
+@media(min-width:760px){.trades-grid{grid-template-columns:repeat(3,1fr)}}
+.trade{position:relative;overflow:hidden;border-radius:14px;aspect-ratio:4/5;background:var(--graphite);border:1px solid rgba(154,161,169,.2);isolation:isolate}
+@media(max-width:759px){.trade{aspect-ratio:16/10}}
+.trade img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(.85) sepia(.35) contrast(1.05) brightness(.8);transform:scale(1.02);transition:transform .6s var(--ease),filter .35s}
+.trade::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(22,24,27,.92));z-index:1}
+.trade .lbl{position:absolute;left:18px;right:18px;bottom:16px;z-index:2;display:flex;justify-content:space-between;align-items:end;gap:10px}
+.trade .lbl b{font-family:var(--display);font-stretch:70%;font-weight:850;text-transform:uppercase;font-size:34px;line-height:.9}
+.trade .lbl span{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--brass)}
+.trade .heat{position:absolute;inset:0;z-index:1;opacity:0;transition:opacity .3s;background:radial-gradient(120% 70% at 50% 110%,rgba(232,87,30,.55),transparent 60%);mix-blend-mode:screen}
+@media (hover:hover){.trade:hover img{transform:scale(1.07);filter:grayscale(.2) sepia(.15) contrast(1.05) brightness(.9)}.trade:hover .heat{opacity:1}}
+.trade-list{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.trade-list li{list-style:none;font-family:var(--mono);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;padding:10px 14px;border-radius:999px;border:1px solid rgba(154,161,169,.3);background:rgba(43,47,53,.5);transition:border-color .2s,box-shadow .2s,color .2s}
+.trade-list li::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ember);margin-right:9px;vertical-align:2px;box-shadow:0 0 8px var(--ember)}
+@media (hover:hover){.trade-list li:hover{border-color:var(--ember);color:#fff;box-shadow:0 0 18px -4px rgba(232,87,30,.7)}}
+.trade-list{padding:0;margin-bottom:0}
+.photo-note{font-size:12.5px;color:var(--scale);margin:14px 0 0}
+
+/* included */
+.inc-grid{display:grid;gap:14px}
+@media(min-width:760px){.inc-grid{grid-template-columns:repeat(6,1fr)}.inc-grid .plate:nth-child(-n+2){grid-column:span 3}.inc-grid .plate:nth-child(n+3){grid-column:span 2}}
+.inc{padding:30px 24px 28px;transition:transform .22s var(--ease),box-shadow .22s var(--ease),border-color .22s}
+.inc .no{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--brass);display:block;margin:6px 0 18px}
+.inc h3{font-family:var(--display);font-stretch:72%;font-weight:850;text-transform:uppercase;font-size:clamp(28px,3.4vw,38px);line-height:.95;margin:0 0 12px}
+.inc p{margin:0;color:#CFC9BE;font-size:16px}
+.inc .spec{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.inc .spec span{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:6px 10px;border-radius:6px;background:rgba(232,87,30,.12);color:#FFB27F;border:1px solid rgba(232,87,30,.35)}
+.heatable{--hx:50%;--hy:50%}
+@media (hover:hover){.heatable:hover{transform:translateY(-4px);border-color:rgba(232,87,30,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 0 1px rgba(232,87,30,.35),0 22px 50px -18px rgba(232,87,30,.55)}
+ .heatable::marker{content:none}
+ .heatable>.glow{position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .25s;background:radial-gradient(260px circle at var(--hx) var(--hy),rgba(255,138,61,.20),transparent 65%)}
+ .heatable:hover>.glow{opacity:1}}
+.all-of-it{margin-top:34px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;padding:22px 24px;border-radius:14px;border:1px dashed rgba(201,161,90,.45)}
+.all-of-it p{margin:0;font-size:18px}
+.all-of-it strong{color:var(--molten)}
+.kraft .all-of-it{border-color:rgba(100,92,80,.45);background:rgba(255,248,236,.6)}.kraft .all-of-it strong{color:var(--ember-deep)}
+.kraft .plate{color:var(--limestone)}
+
+/* pricing */
+.price-wrap{display:grid;gap:28px;align-items:center}
+@media(min-width:960px){.price-wrap{grid-template-columns:1fr 1.15fr;gap:56px}}
+.price-plate{padding:0;overflow:hidden}
+.price-plate .hazard{border-radius:14px 14px 0 0}
+.pp-body{padding:30px 24px 26px}
+@media(min-width:600px){.pp-body{padding:38px 40px 34px}}
+.pp-label{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;color:var(--scale);text-transform:uppercase;margin:6px 0 4px}
+.pp-price{position:relative;display:inline-flex;align-items:flex-start;gap:6px;font-family:var(--display);font-stretch:66%;font-weight:900;line-height:.85;color:var(--limestone);border-radius:10px}
+.pp-price .d{font-size:clamp(46px,8vw,64px);margin-top:.12em;color:var(--molten)}
+.pp-price .n{font-size:clamp(120px,24vw,196px);letter-spacing:-.02em;background:linear-gradient(180deg,#FFF6E8,#F5F2EC 40%,#C9C2B5);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 6px 20px rgba(232,87,30,.25))}
+.pp-price .m{align-self:flex-end;font-size:clamp(28px,5vw,40px);margin-bottom:.3em;color:#D9D4CA}
+.pp-exact{font-size:clamp(17px,2.2vw,20px);margin:14px 0 22px;color:#F0EADF;max-width:34ch}
+.pp-exact b{color:#fff}
+.spec-table{display:grid;grid-template-columns:1fr;border-top:1px solid rgba(154,161,169,.22);margin:0 0 26px}
+.spec-table div{display:grid;grid-template-columns:118px 1fr;gap:14px;padding:12px 0;border-bottom:1px solid rgba(154,161,169,.14);font-size:15.5px}
+.spec-table dt{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--brass);padding-top:3px}
+.spec-table dd{margin:0}
+.pp-ctas{display:flex;flex-wrap:wrap;gap:12px}
+.price-copy .lead{margin-bottom:22px}
+.promise{display:grid;gap:12px;margin:26px 0 0;padding:0}
+.promise li{list-style:none;display:flex;gap:12px;align-items:flex-start;font-size:16.5px}
+.promise li::before{content:"";flex:none;width:18px;height:18px;margin-top:3px;border-radius:4px;background:var(--ember);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M7.6 14.2 3.4 10l1.4-1.4 2.8 2.8 7.6-7.6L16.6 5z'/%3E%3C/svg%3E") center/16px no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M7.6 14.2 3.4 10l1.4-1.4 2.8 2.8 7.6-7.6L16.6 5z'/%3E%3C/svg%3E") center/16px no-repeat}
+
+/* guides */
+.guide-card{display:grid;gap:0;text-decoration:none;border-radius:16px;overflow:hidden;background:linear-gradient(180deg,#FFF8EC,#F2E4CC);border:1px solid rgba(100,92,80,.28);color:var(--umber);transition:transform .22s var(--ease),box-shadow .22s var(--ease);box-shadow:0 22px 44px -28px rgba(60,40,20,.6)}
+@media(min-width:800px){.guide-card{grid-template-columns:.9fr 1.1fr}}
+.guide-art{position:relative;min-height:220px;background:var(--iron);overflow:hidden}
+.guide-art svg{position:absolute;inset:0;width:100%;height:100%}
+.guide-body{padding:30px 26px 28px;display:flex;flex-direction:column;gap:14px}
+@media(min-width:800px){.guide-body{padding:44px 44px 40px}}
+.guide-body .tagx{align-self:flex-start;font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;padding:6px 10px;border-radius:6px;background:var(--iron);color:var(--molten)}
+.guide-body h3{margin:0;font-family:var(--display);font-stretch:72%;font-weight:850;text-transform:uppercase;font-size:clamp(32px,4.6vw,52px);line-height:.92;color:var(--iron)}
+.guide-body p{margin:0;color:#4A4339}
+.guide-body .go{margin-top:6px;font-family:var(--display);font-stretch:85%;font-weight:750;color:var(--ember-deep);display:inline-flex;gap:8px;align-items:center}
+@media (hover:hover){.guide-card:hover{transform:translateY(-4px);box-shadow:0 0 0 1px rgba(232,87,30,.5),0 30px 60px -26px rgba(232,87,30,.6)}.guide-card:hover .go .arr{transform:translateX(5px)}}
+.go .arr{transition:transform .2s var(--ease)}
+.more{margin-top:18px;font-size:15px}.more a{color:var(--ember-deep);text-underline-offset:4px}
+
+/* book */
+.book{overflow:hidden}
+.book-inner{position:relative;display:grid;gap:30px;padding:40px 26px;border-radius:20px;overflow:hidden;isolation:isolate;
+  background:radial-gradient(120% 120% at 100% 0%,rgba(232,87,30,.28),transparent 50%),linear-gradient(160deg,#25292E,#16181B)}
+.book-inner::before{content:"";position:absolute;inset:0;z-index:-1;background-image:linear-gradient(rgba(201,161,90,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(201,161,90,.08) 1px,transparent 1px);background-size:40px 40px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 60%);mask-image:linear-gradient(90deg,transparent,#000 60%)}
+@media(min-width:900px){.book-inner{grid-template-columns:1.3fr 1fr;padding:64px 64px;align-items:center}}
+.book .h2{margin-bottom:16px}
+.book .side{display:grid;gap:14px;justify-items:start}
+.ticket{padding:34px 26px 26px;width:100%}
+.asks{list-style:none;margin:0 0 6px;padding:0;width:100%;display:grid}
+.asks li{display:flex;gap:14px;align-items:baseline;padding:12px 0;border-bottom:1px solid rgba(154,161,169,.16);font-family:var(--display);font-stretch:80%;font-weight:750;font-size:21px}
+.asks .mono{font-size:11.5px;color:var(--brass)}
+.ticket .btn{width:100%}
+.book .side .or{font-family:var(--mono);font-size:13px;letter-spacing:.08em;color:var(--scale)}
+.book .side .or a{color:var(--limestone);text-underline-offset:4px}
+.who{margin-top:26px;padding-top:22px;border-top:1px solid rgba(154,161,169,.2);font-size:15.5px;color:#CFC9BE;max-width:60ch}
+.who b{color:var(--limestone)}
+
+/* faq */
+.faq-wrap{display:grid;gap:30px}
+@media(min-width:960px){.faq-wrap{grid-template-columns:.8fr 1.2fr;gap:56px}}
+.faq{border-top:1px solid rgba(100,92,80,.3)}
+.faq details{border-bottom:1px solid rgba(100,92,80,.3)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:18px;align-items:center;padding:20px 2px;font-family:var(--display);font-stretch:85%;font-weight:750;font-size:19px;line-height:1.25;color:var(--iron)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary i{flex:none;position:relative;width:30px;height:30px;border-radius:8px;background:var(--iron);transition:background .2s,transform .25s var(--ease)}
+.faq summary i::before,.faq summary i::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:2px;margin:-1px 0 0 -6px;background:var(--molten);transition:transform .25s var(--ease)}
+.faq summary i::after{transform:rotate(90deg)}
+.faq details[open] summary i{background:var(--ember)}.faq details[open] summary i::before,.faq details[open] summary i::after{background:var(--iron)}
+.faq details[open] summary i::after{transform:rotate(0)}
+.faq summary:hover{color:var(--ember-deep)}
+.faq .a{padding:0 2px 22px;color:#4A4339;max-width:62ch}
+
+/* footer */
+footer{padding:72px 0 120px;background:var(--iron)}
+@media(min-width:900px){footer{padding-bottom:56px}}
+.foot{display:grid;gap:34px}
+@media(min-width:900px){.foot{grid-template-columns:1.3fr 1fr 1fr}}
+.foot .big{font-family:var(--display);font-stretch:66%;font-weight:880;text-transform:uppercase;font-size:clamp(46px,8vw,86px);line-height:.88;margin:22px 0 0}
+.foot .big .warm{display:block;font-size:.5em;color:var(--copper)}
+.foot h4{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;color:var(--scale);margin:0 0 12px;font-weight:500}
+.foot ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.foot a{text-decoration:none;opacity:.86}.foot a:hover{opacity:1;color:var(--molten)}
+.foot .tel{font-family:var(--display);font-stretch:75%;font-weight:850;font-size:34px;letter-spacing:.01em}
+.fine{margin-top:44px;padding-top:20px;border-top:1px solid rgba(154,161,169,.16);display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;font-size:13px;color:var(--scale)}
+
+/* sticky call bar (mobile) */
+.callbar{position:fixed;left:0;right:0;bottom:0;z-index:55;display:grid;grid-template-columns:1fr 1.25fr;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(22,24,27,.97);border-top:1px solid rgba(154,161,169,.2);box-shadow:0 -10px 30px -10px rgba(0,0,0,.6)}
+.callbar::before{content:"";position:absolute;left:0;right:0;top:-1px;height:2px;background:linear-gradient(90deg,transparent,var(--ember),transparent);opacity:.8}
+.callbar .btn{min-height:50px;font-size:16px;padding:0 12px}
+@media(min-width:900px){.callbar{display:none}}
+
+/* reduced motion: everything static, visible */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js .stamp,.js .rv{opacity:1!important;transform:none!important}
+  .btn{transform:none!important}.weld i{transform:scaleX(1)!important}
+  .progress,.spot,.steel-line i{display:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="progress" aria-hidden="true"></div>
+<div class="concept-flag">Design concept · not the live site</div>
+
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="Forge Systems home">
+      <img src="assets/forge-mark.svg" width="38" height="38" alt="">
+      <span><b>Forge</b><small>SYSTEMS</small></span>
+    </a>
+    <ul>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#trades">Trades</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#guides">Guides</a></li>
+      <li><a href="#book">Book a call</a></li>
+    </ul>
+    <div class="right">
+      <a class="tel" href="tel:+15125424826">(512) 542-4826</a>
+      <a class="btn btn-ember magnetic" href="https://forgesystemsatx.com/#contact">Get my free preview</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<!-- HERO -->
+<section class="hero has-spot" id="top" aria-labelledby="h1">
+  <div class="hero-img" aria-hidden="true">
+    <picture><source media="(min-width:900px)" srcset="assets/hero-2000.webp"><img src="assets/hero-1000.webp" width="2000" height="1333" alt="" fetchpriority="high"></picture>
+  </div>
+  <div class="spot" aria-hidden="true"></div>
+  <div class="steel-line" aria-hidden="true"><i></i></div>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">Websites for Texas service businesses · Austin, TX</p>
+    <h1 id="h1"><span class="row">We already</span><span class="row">built your</span><span class="row"><span class="hot">website.</span></span><span class="warm">Take a look.</span></h1>
+    <p class="sub">We build your new site first, free. You see it before you decide anything. No deposit: you pay only once your site is live.</p>
+    <div class="cta-row">
+      <a class="btn btn-ember magnetic sheen-once" href="https://forgesystemsatx.com/#contact">Get my free preview <svg class="arr" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 10h12M11 5l5 5-5 5"/></svg></a>
+      <a class="btn btn-steel" href="tel:+15125424826"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>Call (512) 542-4826</a>
+    </div>
+    <div class="chips">
+      <div class="chip stamp"><b>FREE</b><span>Preview, built before we ever call</span></div>
+      <div class="chip stamp"><b>$0</b><span>No deposit</span></div>
+      <div class="chip stamp"><b>LIVE</b><span>You pay only once your site is live</span></div>
+    </div>
+  </div>
+</section>
+<div class="hazard" aria-hidden="true"></div>
+
+<!-- HOW -->
+<section class="sec kraft" id="how" aria-labelledby="how-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><p class="kicker">How it works</p><h2 class="h2" id="how-h">Three steps. <span class="warm">No pitch first.</span></h2></div>
+      <p class="lead">You see the finished work before anyone asks you for anything. That's how a shop proves itself.</p>
+    </div>
+    <div class="steps">
+      <div class="weld rv" aria-hidden="true"><i></i></div>
+      <article class="step rv"><span class="tag">STEP 01</span><div class="num stamp">01</div><h3>We find you</h3><p>We look up your business on Google and Yelp and see what your customers see today.</p></article>
+      <article class="step rv"><span class="tag">STEP 02</span><div class="num stamp">02</div><h3>We build your preview free</h3><p>We build a real, working version of your new site and send you the link. Open it on your phone.</p></article>
+      <article class="step rv"><span class="tag">STEP 03</span><div class="num stamp">03</div><h3>You call us</h3><p>Like it? Call us and we take it live. Don't like it? You owe nothing.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- TRADES -->
+<section class="sec blueprint has-spot" id="trades" aria-labelledby="tr-h">
+  <div class="spot" aria-hidden="true"></div>
+  <div class="wrap" style="position:relative">
+    <div class="sec-head">
+      <div><p class="kicker">Who we build for</p><h2 class="h2" id="tr-h">Built for <span class="warm">the trades.</span></h2></div>
+      <p class="lead">If your work comes from phone calls, your website should make that call easy. That's the whole job.</p>
+    </div>
+    <div class="trades-grid">
+      <figure class="trade rv" style="margin:0"><img src="assets/crew.webp" width="1100" height="729" alt="Crew on a construction site" loading="lazy" decoding="async"><div class="heat" aria-hidden="true"></div><figcaption class="lbl"><b>Roofing &amp; building</b><span>01</span></figcaption></figure>
+      <figure class="trade rv" style="margin:0"><img src="assets/paint.webp" width="1100" height="768" alt="Paint roller on a wall" loading="lazy" decoding="async"><div class="heat" aria-hidden="true"></div><figcaption class="lbl"><b>Painting</b><span>02</span></figcaption></figure>
+      <figure class="trade rv" style="margin:0"><img src="assets/land.webp" width="1100" height="733" alt="Garden trowel in soil" loading="lazy" decoding="async"><div class="heat" aria-hidden="true"></div><figcaption class="lbl"><b>Landscaping</b><span>03</span></figcaption></figure>
+    </div>
+    <ul class="trade-list" aria-label="Trades we build for">
+      <li>Roofers</li><li>HVAC techs</li><li>Painters</li><li>Landscapers</li><li>Plumbers</li><li>Cleaners</li>
+    </ul>
+  </div>
+</section>
+
+<!-- INCLUDED -->
+<section class="sec kraft" id="included" aria-labelledby="inc-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><p class="kicker">What's included</p><h2 class="h2" id="inc-h">What <span class="warm">you get.</span></h2></div>
+      <p class="lead">One package, run by us. You get back to the job.</p>
+    </div>
+    <div class="inc-grid">
+      <article class="plate rivets inc heatable rv"><span class="glow"></span><span class="no">01 · Website</span><h3>Your website</h3><p>Built for your trade and your town. Loads fast on phones and puts your number one tap away.</p><div class="spec"><span>Up to 5 pages</span><span>Mobile-first</span><span>Built to load fast on phones</span></div></article>
+      <article class="plate rivets inc heatable rv"><span class="glow"></span><span class="no">02 · Hosting &amp; care</span><h3>Hosting &amp; care</h3><p>We keep it online, secure and up to date. Need a change? Call or email us and we'll handle it.</p></article>
+      <article class="plate rivets inc heatable rv"><span class="glow"></span><span class="no">03 · Google</span><h3>Google Business Profile setup</h3><p>Your hours, photos, services and service area, set up so nearby customers can find and call you.</p></article>
+      <article class="plate rivets inc heatable rv"><span class="glow"></span><span class="no">04 · Yelp</span><h3>Yelp setup</h3><p>We set up your Yelp page so it matches your site and points people to your phone.</p></article>
+      <article class="plate rivets inc heatable rv"><span class="glow"></span><span class="no">05 · Weekly</span><h3>A weekly article</h3><p>One new article every week about the work you do and the places you do it.</p></article>
+    </div>
+    <div class="all-of-it rv">
+      <p>All of it: <strong>$149/mo with a 12-month commitment, or $960 paid for the year.</strong></p>
+      <a class="btn btn-ember magnetic" href="https://forgesystemsatx.com/#contact">Get my free preview</a>
+    </div>
+  </div>
+</section>
+<div class="hazard" aria-hidden="true"></div>
+
+<!-- PRICING -->
+<section class="sec blueprint has-spot" id="pricing" aria-labelledby="pr-h">
+  <div class="spot" aria-hidden="true"></div>
+  <div class="wrap price-wrap" style="position:relative">
+    <div class="price-copy">
+      <p class="kicker">Pricing</p>
+      <h2 class="h2" id="pr-h">One plan. <span class="warm">One price.</span></h2>
+      <p class="lead">One package, one price, no tiers to decode. You see your site first, then decide.</p>
+      <ul class="promise">
+        <li>Free preview, built before we call</li>
+        <li>No deposit. You pay only once your site is live.</li>
+        <li>Need a change? Call or email us.</li>
+      </ul>
+    </div>
+    <div class="plate price-plate rv">
+      <div class="hazard" aria-hidden="true"></div>
+      <div class="pp-body rivets">
+        <p class="pp-label">Spec plate · All-in website package</p>
+        <div class="pp-price stamp" aria-label="$149 per month"><span class="d" aria-hidden="true">$</span><span class="n" aria-hidden="true">149</span><span class="m" aria-hidden="true">/mo</span></div>
+        <p class="pp-exact"><b>$149/mo with a 12-month commitment, or $960 paid for the year.</b></p>
+        <dl class="spec-table">
+          <div><dt>Pages</dt><dd>Up to 5</dd></div>
+          <div><dt>Speed</dt><dd>Built to load fast on phones</dd></div>
+          <div><dt>Hosting</dt><dd>Hosting &amp; care included</dd></div>
+          <div><dt>Listings</dt><dd>Google Business Profile setup, Yelp setup</dd></div>
+          <div><dt>Content</dt><dd>A weekly article</dd></div>
+          <div><dt>Deposit</dt><dd>$0. You pay only once your site is live.</dd></div>
+        </dl>
+        <div class="pp-ctas">
+          <a class="btn btn-ember magnetic" href="https://forgesystemsatx.com/#contact">Get my free preview</a>
+          <a class="btn btn-steel" href="#book">Book a call</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GUIDES -->
+<section class="sec kraft" id="guides" aria-labelledby="gd-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><p class="kicker">Guides by trade</p><h2 class="h2" id="gd-h">Guides <span class="warm">by trade.</span></h2></div>
+      <p class="lead">Plain-language guides for Texas service business owners. New guides are added as they're ready.</p>
+    </div>
+    <a class="guide-card rv" href="https://forgesystemsatx.com/guides/hvac-website-design-austin">
+      <div class="guide-art" aria-hidden="true">
+        <svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid slice">
+          <defs><pattern id="g" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#9AA1A9" stroke-opacity=".12"/></pattern>
+          <radialGradient id="h" cx="50%" cy="55%" r="55%"><stop offset="0" stop-color="#E8571E" stop-opacity=".55"/><stop offset="1" stop-color="#E8571E" stop-opacity="0"/></radialGradient></defs>
+          <rect width="400" height="260" fill="#16181B"/><rect width="400" height="260" fill="url(#g)"/><circle cx="200" cy="140" r="150" fill="url(#h)"/>
+          <g fill="none" stroke="#F5F2EC" stroke-width="3" stroke-linecap="round" opacity=".9">
+            <circle cx="200" cy="135" r="70"/><circle cx="200" cy="135" r="54" stroke="#C9A15A" stroke-opacity=".7" stroke-width="2" stroke-dasharray="2 8"/>
+            <path d="M200 135 L238 102" stroke="#E8571E" stroke-width="5"/><circle cx="200" cy="135" r="6" fill="#F5F2EC"/>
+          </g>
+          <text x="200" y="232" text-anchor="middle" font-family="Plex Mono, monospace" font-size="13" letter-spacing="3" fill="#9AA1A9">HVAC · AUSTIN, TX</text>
+        </svg>
+      </div>
+      <div class="guide-body">
+        <span class="tagx">HVAC</span>
+        <h3>HVAC Website Design in Austin: Cost and What It Needs</h3>
+        <p>What HVAC websites cost, what yours needs to win calls in Central Texas, and how to compare quotes.</p>
+        <span class="go">Read guide <svg class="arr" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 10h12M11 5l5 5-5 5"/></svg></span>
+      </div>
+    </a>
+    <p class="more">More reading: <a href="https://forgesystemsatx.com/guides">see all guides</a></p>
+  </div>
+</section>
+
+<!-- BOOK -->
+<section class="sec book" id="book" aria-labelledby="bk-h" style="background:var(--iron)">
+  <div class="wrap">
+    <div class="book-inner has-spot">
+      <div class="spot" aria-hidden="true"></div>
+      <div>
+        <p class="kicker">Book a call</p>
+        <h2 class="h2" id="bk-h">Book a call. <span class="warm">No cold call needed.</span></h2>
+        <p class="lead">Pick a time that works. If it's not a fit, we'll say so.</p>
+        <p class="who"><b>Who builds it.</b> Forge Systems is Treyvion Ojeda, based in Austin. I build websites and back-office systems for service businesses, and I show every prospect their new site before I ask for anything.</p>
+      </div>
+      <div class="side plate rivets ticket">
+        <p class="pp-label">Bring your questions</p>
+        <ul class="asks"><li><span class="mono">01</span>Price</li><li><span class="mono">02</span>How the preview works</li><li><span class="mono">03</span>What your site would include</li></ul>
+        <a class="btn btn-ember magnetic" href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ3yED4d2gN08SIUX_RGWrwgw6azsbCsFiJsHEqoVs36fjzYmaamsoRCqg4SPcQVWZp7MmbCN-8U" target="_blank" rel="noopener">Pick a time <svg class="arr" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 10h12M11 5l5 5-5 5"/></svg></a>
+        <span class="or">Or call <a href="tel:+15125424826">(512) 542-4826</a></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="sec kraft" id="faq" aria-labelledby="fq-h">
+  <div class="wrap faq-wrap">
+    <div>
+      <p class="kicker">FAQ</p>
+      <h2 class="h2" id="fq-h">Straight <span class="warm">answers.</span></h2>
+      <a class="btn btn-steel" href="tel:+15125424826">Call (512) 542-4826</a>
+    </div>
+    <div class="faq">
+      <details open><summary>How much does a website from Forge Systems cost?<i aria-hidden="true"></i></summary><div class="a">All-in website package: $149/mo with a 12-month commitment, or $960 paid for the year.</div></details>
+      <details><summary>Do I have to pay a deposit?<i aria-hidden="true"></i></summary><div class="a">No. You pay only once your site is live on your domain.</div></details>
+      <details><summary>What is the free preview?<i aria-hidden="true"></i></summary><div class="a">It is a private version of your new website, built with your real public business information, before anyone pitches you anything. Nobody else can see it.</div></details>
+      <details><summary>Is the preview really free?<i aria-hidden="true"></i></summary><div class="a">Yes. Look at it. If it is not for you, no hard feelings.</div></details>
+      <details><summary>What is AEO?<i aria-hidden="true"></i></summary><div class="a">AEO means answer engine optimization: setting up your site so AI assistants like ChatGPT and Google's AI answers can find and quote your business. We do it with FAQs written as real questions, clear facts about your services and area, and structured data.</div></details>
+      <details><summary>Can you guarantee my business will rank #1 on Google?<i aria-hidden="true"></i></summary><div class="a">No. Nobody honest can. We guarantee professional execution, not algorithm outcomes: fast pages, correct local details and clean structured data.</div></details>
+      <details><summary>What is included in the all-in website package?<i aria-hidden="true"></i></summary><div class="a">The website, hosting and care, Google Business Profile setup, Yelp setup, and a weekly article. Your website includes up to 5 pages, mobile-first design, built to load fast on phones, call and contact buttons, a Google Maps embed and a full SEO and AEO launch checklist.</div></details>
+      <details><summary>What does $149 a month include?<i aria-hidden="true"></i></summary><div class="a">Your website, hosting and care, your Google Business Profile, your Yelp page, and a new article every week. Or pay $960 for the year.</div></details>
+      <details><summary>What are custom business systems?<i aria-hidden="true"></i></summary><div class="a">They are back-office setups like a CRM, lead follow-up automations, online booking and an AI receptionist. Each one is quoted per client after we see what you actually need.</div></details>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="hazard" aria-hidden="true"></div>
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="brand" href="#top" aria-label="Forge Systems home"><img src="assets/forge-mark.svg" width="38" height="38" alt=""><span><b>Forge</b><small>SYSTEMS</small></span></a>
+        <p class="big">Shop-built <span class="warm">websites for Texas trades.</span></p>
+      </div>
+      <div>
+        <h4>CALL</h4>
+        <a class="tel" href="tel:+15125424826">(512) 542-4826</a>
+        <p style="margin:14px 0 0;color:#CFC9BE;font-size:15px">8515 S I-35 Frontage Rd, Austin, TX 78744<br><a href="mailto:treyvion.ojeda9@gmail.com">treyvion.ojeda9@gmail.com</a></p>
+      </div>
+      <div>
+        <h4>SITE</h4>
+        <ul>
+          <li><a href="#how">How it works</a></li><li><a href="#trades">Trades</a></li><li><a href="#pricing">Pricing</a></li><li><a href="#guides">Guides</a></li><li><a href="#book">Book a call</a></li><li><a href="https://forgesystemsatx.com/articles">Articles</a></li><li><a href="#faq">FAQ</a></li><li><a href="https://forgesystemsatx.com/privacy">Privacy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="fine"><span>© 2026 Forge Systems</span><span>Websites for Texas service businesses</span></div>
+  </div>
+</footer>
+
+<nav class="callbar" aria-label="Quick contact">
+  <a class="btn btn-steel" href="tel:+15125424826"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>Call</a>
+  <a class="btn btn-ember" href="https://forgesystemsatx.com/#contact">Get my free preview</a>
+</nav>
+
+<script>
+(()=>{
+  const d=document.documentElement, reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, fine=matchMedia('(hover:hover) and (pointer:fine)').matches;
+  if(reduce||!('IntersectionObserver' in window)) return;
+  d.classList.add('js');
+  // reveals + stamps (once)
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -8% 0px',threshold:.15});
+  document.querySelectorAll('.rv,.stamp').forEach((el,i)=>{ if(el.classList.contains('stamp')){const sib=[...el.parentElement.parentElement.querySelectorAll('.stamp')];const k=Math.max(0,sib.indexOf(el));el.style.animationDelay=(k*90)+'ms'} io.observe(el)});
+  // molten progress + steel line, one rAF
+  const bar=document.querySelector('.progress'), tip=document.querySelector('.steel-line i'), hero=document.querySelector('.hero');
+  let ticking=false;
+  const onScroll=()=>{ if(ticking) return; ticking=true; requestAnimationFrame(()=>{ const h=d.scrollHeight-innerHeight, y=scrollY; bar.style.setProperty('--p',h>0?(y/h).toFixed(4):0);
+      if(tip){const hh=hero.offsetHeight; tip.style.setProperty('--ty',(120+Math.min(y,hh)*0.6)+'px')} ticking=false})};
+  addEventListener('scroll',onScroll,{passive:true}); onScroll();
+  // one sheen pass on the hero CTA after load
+  setTimeout(()=>{const b=document.querySelector('.sheen-once'); if(b){b.classList.add('sheen'); setTimeout(()=>b.classList.remove('sheen'),900)}},900);
+  if(!fine) return;
+  // cursor spotlight
+  document.querySelectorAll('.has-spot').forEach(s=>{const sp=s.querySelector(':scope>.spot'); if(!sp) return; let r=0;
+    s.addEventListener('pointermove',e=>{ if(r) return; r=requestAnimationFrame(()=>{const b=s.getBoundingClientRect(); sp.style.setProperty('--sx',(e.clientX-b.left)+'px'); sp.style.setProperty('--sy',(e.clientY-b.top)+'px'); r=0})},{passive:true})});
+  // heat glow follows pointer on plates
+  document.querySelectorAll('.heatable').forEach(c=>{ let r=0; c.addEventListener('pointermove',e=>{ if(r) return; r=requestAnimationFrame(()=>{const b=c.getBoundingClientRect(); c.style.setProperty('--hx',(e.clientX-b.left)+'px'); c.style.setProperty('--hy',(e.clientY-b.top)+'px'); r=0})},{passive:true})});
+  // magnetic CTAs (max ~6px)
+  document.querySelectorAll('.magnetic').forEach(b=>{ let r=0;
+    b.addEventListener('pointermove',e=>{ if(r) return; r=requestAnimationFrame(()=>{const k=b.getBoundingClientRect(); const x=(e.clientX-k.left-k.width/2)/k.width, y=(e.clientY-k.top-k.height/2)/k.height; b.style.setProperty('--mx',(x*12).toFixed(1)+'px'); b.style.setProperty('--my',(y*8).toFixed(1)+'px'); r=0})},{passive:true});
+    b.addEventListener('pointerleave',()=>{b.style.setProperty('--mx','0px'); b.style.setProperty('--my','0px')})});
+})();
+</script>
+</body>
+</html>
